@@ -1,3 +1,6 @@
+
+
+
 let newArr = [
     // {
     //     place: 'back_1',
