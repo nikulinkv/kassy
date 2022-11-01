@@ -1,0 +1,58 @@
+[
+    {
+        "id": 66,
+        "cityName": "Екатеринбург",
+        "background": [
+            {
+                "company": "ООО Большие Гастроли",
+                "event": "https://barnaul.kassy.ru/events/koncerty-i-shou/2-10097/",
+                "startedAt": "",
+                "endedAt": "",
+                "summ": "3000"
+            },
+            {
+                "company": "ООО Большие",
+                "event": "https://barnaul.kassy.ru/events/koncerty-i-shou/2-10097/",
+                "startedAt": "",
+                "endedAt": "",
+                "summ": "3000"
+            }
+        ],
+        "stretch": [
+            {
+                "company": "ООО Гастроли",
+                "event": "https://barnaul.kassy.ru/events/koncerty-i-shou/2-10097/",
+                "startedAt": "",
+                "endedAt": "",
+                "summ": "3000"
+            }
+        ],
+        "bannerMain": [
+            {
+                "company": "ООО Большие Гастроли",
+                "event": "https://barnaul.kassy.ru/events/koncerty-i-shou/2-10097/",
+                "startedAt": "",
+                "endedAt": "",
+                "summ": "3000"
+            }
+        ],
+        "bannerMedium": [
+            {
+                "company": "ООО Большие Гастроли",
+                "event": "https://barnaul.kassy.ru/events/koncerty-i-shou/2-10097/",
+                "startedAt": "",
+                "endedAt": "","eventDate": "",
+                "summ": "3000"
+            }
+        ],
+        "bannerSmall": [
+            {
+                "company": "ООО Большие Гастроли",
+                "event": "https://barnaul.kassy.ru/events/koncerty-i-shou/2-10097/",
+                "startedAt": "",
+                "endedAt": "",
+                "summ": "3000"
+            }
+        ]
+    }
+]

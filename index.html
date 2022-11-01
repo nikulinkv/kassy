@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script defer src="index.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <img src="img/logo.jpg" alt="KASSY.RU" class="logo">
+            <select name="cities" id="cities">
+                <option value="Екатеринбург">Екатеринбург</option>
+            </select>
+        </header>
+
+        <div class="main">
+            <table>
+                <thead>
+                    <tr class="head__days">
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- БЭК -->
+                    <tr class="days">
+                        <td rowspan="1" data-target="back">БЭК</td>
+                        <td class="back_1">Место 1</td>
+                    </tr>
+                    <tr data-tab="back" class="days">
+                        <td class="back_2">Место 2</td>
+                    </tr>
+                    <tr class="section"></tr>
+                    <!-- Растяжка -->
+                    <tr class="days">
+                        <td rowspan="1" data-target="stretch">Растяжка</td>
+                        <td class="stretch_1">Место 1</td>
+                    </tr>
+                    <tr class="section"></tr>
+                    <!-- Большой баннер -->
+                    <tr class="days">
+                        <td rowspan="1" data-target="main">Большой баннер</td>
+                        <td class="main_1">Место 1</td>
+                    </tr>
+                    <tr data-tab="main" class="days">
+                        <td class="main_2">Место 2</td>
+                    </tr>
+                    <tr data-tab="main" class="days">
+                        <td class="main_3">Место 3</td>
+                    </tr>
+                    <tr data-tab="main" class="days">
+                        <td class="main_4">Место 4</td>
+                    </tr>
+                    <tr data-tab="main" class="days">
+                        <td class="main_5">Место 5</td>
+                    </tr>
+                    <tr data-tab="main" class="days">
+                        <td class="main_6">Место 6</td>
+                    </tr>
+                    <tr data-tab="main" class="days">
+                        <td class="main_7">Место 7</td>
+                    </tr>
+                    <tr class="section"></tr>
+                    <!-- Средний баннер -->
+                    <tr class="days">
+                        <td rowspan="1" data-target="middle">Средний баннер</td>
+                        <td>Место 1</td>
+                    </tr>
+                    <tr data-tab="middle" class="days">
+                        <td>Место 2</td>
+                    </tr>
+                    <tr data-tab="middle" class="days">
+                        <td>Место 3</td>
+                    </tr>
+                    <tr data-tab="middle" class="days">
+                        <td>Место 4</td>
+                    </tr>
+                    <tr data-tab="middle" class="days">
+                        <td>Место 5</td>
+                    </tr>
+                    <tr data-tab="middle" class="days">
+                        <td>Место 6</td>
+                    </tr>
+                    <tr data-tab="middle" class="days">
+                        <td>Место 7</td>
+                    </tr>
+                    <tr class="section"></tr>
+                    <!-- Маленький баннер -->
+                    <tr class="days">
+                        <td rowspan="1" data-target="small">Маленький баннер</td>
+                        <td>Место 1</td>
+                    </tr>
+                    <tr data-tab="small" class="days">
+                        <td>Место 2</td>
+                    </tr>
+                    <tr data-tab="small" class="days">
+                        <td>Место 3</td>
+                    </tr>
+                    <tr data-tab="small" class="days">
+                        <td>Место 4</td>
+                    </tr>
+                    <tr data-tab="small" class="days">
+                        <td>Место 5</td>
+                    </tr>
+                    <tr data-tab="small" class="days">
+                        <td>Место 6</td>
+                    </tr>
+                    <tr data-tab="small" class="days">
+                        <td>Место 7</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <form>
+            <div>
+                <label for="type">Выберите размещение</label>
+                <select name="Место" id="type">
+                    <option value="back">БЭК</option>
+                    <option value="stretch">Растяжка</option>
+                    <option value="main">Большой баннер</option>
+                    <option value="middle">Средний баннер</option>
+                    <option value="small">Маленький баннер</option>
+                </select>
+            </div>
+            <div>
+                <label for="type">Выберите место</label>
+                <select name="Место" id="place">
+                    <option value="1">Место 1</option>
+                    <option value="2">Место 2</option>
+                    <option value="3">Место 3</option>
+                    <option value="4">Место 4</option>
+                    <option value="5">Место 5</option>
+                    <option value="6">Место 6</option>
+                    <option value="7">Место 7</option>
+                </select>
+            </div>
+            <div>
+                <label for="startedAt">Дата начала</label>
+                <input type="date" id="startedAt">
+            </div>
+            <div>
+                <label for="endedAt">Дата окончания</label>
+                <input type="date" id="endedAt">
+            </div>
+            <button type="submit">Добавить событие</button>
+        </form>
+    </div>
+</body>
+</html>
