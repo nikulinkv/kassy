@@ -4,11 +4,11 @@ const { existsSync, readFileSync, writeFileSync } = require('fs');
 const { createServer } = require('http');
 
 // файл для базы данных
-const DB_FILE = process.env.DB_FILE || './cities.json';
+const DB_FILE = process.env.DB_FILE || './events.json';
 // номер порта, на котором будет запущен сервер
 const PORT = process.env.PORT || 3000;
 // префикс URI для всех методов приложения
-const URI_PREFIX = '/api/cities';
+const URI_PREFIX = '/api/events';
 
 /**
  * Класс ошибки, используется для отправки ответа с определённым кодом и описанием ошибки
@@ -40,12 +40,12 @@ function drainJson(req) {
 }
 
 /**
- * Проверяет входные данные и создаёт из них корректный объект города
+ * Проверяет входные данные и создаёт из них корректный объект мероприятия
  * @param {Object} data - Объект с входными данными
  * @throws {ApiError} Некорректные данные в аргументе (statusCode 422)
- * @returns {{ cityName: string, backgound: object[], stretch: object[], bannerMain: object[], bannerMedium: object[], bannerSmall: object[] }} Объект города
+ * @returns {{ place: string, event: string, startedAt: string, endedAt: string, summ: string }} Объект мероприятия
  */
-function makeCityFromData(data) {
+function makeEventFromData(data) {
   const errors = [];
 
   function asString(v) {
@@ -54,13 +54,11 @@ function makeCityFromData(data) {
 
   // составляем объект, где есть только необходимые поля
   const city = {
-    cityName: asString(data.cityName),
-    background: Array.isArray(data.background) ? data.background.map(el => ({
-      company: asString(el.company),
-      event: asString(el.event),
-      eventDate: asString(el.eventDate),
-      summ: asString(el.summ),
-    })) : [],
+    place: asString(data.place),
+    event: asString(data.event),
+    startedAt: asString(data.startedAt),
+    endedAt: asString(data.endedAt),
+    summ: asString(data.summ)
   };
 
 //   // проверяем, все ли данные корректные и заполняем объект ошибок, которые нужно отдать клиенту
@@ -76,79 +74,78 @@ function makeCityFromData(data) {
 }
 
 /**
- * Возвращает список клиентов из базы данных
+ * Возвращает список мероприятий из базы данных
  * @param {{ search: string }} [params] - Поисковая строка
- * @returns {{ id: string, cityName: string, backgound: object[], stretch: object[], bannerMain: object[], bannerMedium: object[], bannerSmall: object[] }[]} Массив клиентов
+ * @returns {{ place: string, event: string, startedAt: string, endedAt: string, summ: string }[]} Массив мероприятий
  */
-function getCityList(params = {}) {
-  const cities = JSON.parse(readFileSync(DB_FILE) || '[]');
+function getEventList(params = {}) {
+  const events = JSON.parse(readFileSync(DB_FILE) || '[]');
   if (params.search) {
     const search = params.search.trim().toLowerCase();
-    return cities.filter(city => [
-        city.cityName,
-        ...cities.background.map(({ value }) => value)
+    return events.filter(event => [
+        event.event,
       ]
         .some(str => str.toLowerCase().includes(search))
     );
   }
-  return cities;
+  return events;
 }
 
 /**
- * Создаёт и сохраняет города в базу данных
- * @throws {ApiError} Некорректные данные в аргументе, клиент не создан (statusCode 422)
+ * Создаёт и сохраняет мероприятие в базу данных
+ * @throws {ApiError} Некорректные данные в аргументе, мероприятие не создано (statusCode 422)
  * @param {Object} data - Данные из тела запроса
- * @returns {{ id: string, cityName: string, backgound: object[], stretch: object[], bannerMain: object[], bannerMedium: object[], bannerSmall: object[], createdAt: string, updatedAt: string }} Объект города
+ * @returns {{ place: string, event: string, startedAt: string, endedAt: string, summ: string }} Объект мероприятия
  */
-function createCity(data) {
-  const newItem = makeCityFromData(data);
+function createEvent(data) {
+  const newItem = makeEventFromData(data);
   newItem.id = Date.now().toString();
   newItem.createdAt = newItem.updatedAt = new Date().toISOString();
-  writeFileSync(DB_FILE, JSON.stringify([...getCityList(), newItem]), { encoding: 'utf8' });
+  writeFileSync(DB_FILE, JSON.stringify([...getEventList(), newItem]), { encoding: 'utf8' });
   return newItem;
 }
 
 /**
- * Возвращает объект города по его ID
- * @param {string} itemId - ID города
- * @throws {ApiError} Клиент с таким ID не найден (statusCode 404)
- * @returns {{ id: string, cityName: string, backgound: object[], stretch: object[], bannerMain: object[], bannerMedium: object[], bannerSmall: object[], createdAt: string, updatedAt: string }} Объект города
+ * Возвращает объект мероприятия по его ID
+ * @param {string} itemId - ID мероприятия
+ * @throws {ApiError} Мероприятие с таким ID не найдено (statusCode 404)
+ * @returns {{ place: string, event: string, startedAt: string, endedAt: string, summ: string, createdAt: string, updatedAt: string }} Объект мероприятия
  */
-function getCity(itemId) {
-  const city = getCityList().find(({ id }) => id === itemId);
-  if (!city) throw new ApiError(404, { message: 'City Not Found' });
-  return city;
+function getEvent(itemId) {
+  const event = getEventList().find(({ id }) => id === itemId);
+  if (!event) throw new ApiError(404, { message: 'Event Not Found' });
+  return event;
 }
 
 /**
- * Изменяет города с указанным ID и сохраняет изменения в базу данных
+ * Изменяет мероприятия с указанным ID и сохраняет изменения в базу данных
  * @param {string} itemId - ID изменяемого города
- * @param {{ cityName?: string, backgound?: string, stretch?: string, bannerMain?: object[], bannerMedium?: object[], bannerSmall?: object[] }} data - Объект с изменяемыми данными
- * @throws {ApiError} Клиент с таким ID не найден (statusCode 404)
+ * @param {{ place?: string, event?: string, startedAt?: string, endedAt?: string, summ?: string }} data - Объект с изменяемыми данными
+ * @throws {ApiError} Мероприятие с таким ID не найдено (statusCode 404)
  * @throws {ApiError} Некорректные данные в аргументе (statusCode 422)
- * @returns {{ id: string, cityName: string, backgound: object[], stretch: object[], bannerMain: object[], bannerMedium: object[], bannerSmall: object[], createdAt: string, updatedAt: string }} Объект города
+ * @returns {{ place: string, event: string, startedAt: string, endedAt: string, summ: string, createdAt: string, updatedAt: string }} Объект мероприятия
  */
-function updateCity(itemId, data) {
-  const cities = getCityList();
-  const itemIndex = cities.findIndex(({ id }) => id === itemId);
-  if (itemIndex === -1) throw new ApiError(404, { message: 'City Not Found' });
-  Object.assign(cities[itemIndex], makeCityFromData({ ...cities[itemIndex], ...data }));
-  cities[itemIndex].updatedAt = new Date().toISOString();
-  writeFileSync(DB_FILE, JSON.stringify(cities), { encoding: 'utf8' });
-  return cities[itemIndex];
+function updateEvent(itemId, data) {
+  const events = getEventList();
+  const itemIndex = events.findIndex(({ id }) => id === itemId);
+  if (itemIndex === -1) throw new ApiError(404, { message: 'Event Not Found' });
+  Object.assign(events[itemIndex], makeEventFromData({ ...events[itemIndex], ...data }));
+  events[itemIndex].updatedAt = new Date().toISOString();
+  writeFileSync(DB_FILE, JSON.stringify(events), { encoding: 'utf8' });
+  return events[itemIndex];
 }
 
 /**
- * Удаляет города из базы данных
- * @param {string} itemId - ID города
+ * Удаляет мероприятие из базы данных
+ * @param {string} itemId - ID мероприятия
  * @returns {{}}
  */
-function deleteCity(itemId) {
-  const cities = getCityList();
-  const itemIndex = cities.findIndex(({ id }) => id === itemId);
-  if (itemIndex === -1) throw new ApiError(404, { message: 'City Not Found' });
-  cities.splice(itemIndex, 1);
-  writeFileSync(DB_FILE, JSON.stringify(cities), { encoding: 'utf8' });
+function deleteEvent(itemId) {
+  const events = getEventList();
+  const itemIndex = events.findIndex(({ id }) => id === itemId);
+  if (itemIndex === -1) throw new ApiError(404, { message: 'Event Not Found' });
+  events.splice(itemIndex, 1);
+  writeFileSync(DB_FILE, JSON.stringify(events), { encoding: 'utf8' });
   return {};
 }
 
@@ -200,21 +197,21 @@ module.exports = createServer(async (req, res) => {
     const body = await (async () => {
       if (uri === '' || uri === '/') {
         // /api/cities
-        if (req.method === 'GET') return getCityList(queryParams);
+        if (req.method === 'GET') return getEventList(queryParams);
         if (req.method === 'POST') {
-          const createdItem = createCity(await drainJson(req));
+          const createdItem = createEvent(await drainJson(req));
           res.statusCode = 201;
           res.setHeader('Access-Control-Expose-Headers', 'Location');
           res.setHeader('Location', `${URI_PREFIX}/${createdItem.id}`);
           return createdItem;
         }
       } else {
-        // /api/cities/{id}
+        // /api/events/{id}
         // параметр {id} из URI запроса
         const itemId = uri.substr(1);
-        if (req.method === 'GET') return getCity(itemId);
-        if (req.method === 'PATCH') return updateCity(itemId, await drainJson(req));
-        if (req.method === 'DELETE') return deleteCity(itemId);
+        if (req.method === 'GET') return getEvent(itemId);
+        if (req.method === 'PATCH') return updateEvent(itemId, await drainJson(req));
+        if (req.method === 'DELETE') return deleteEvent(itemId);
       }
       return null;
     })();
@@ -238,13 +235,13 @@ module.exports = createServer(async (req, res) => {
       console.log(`Сервер CRM запущен. Вы можете использовать его по адресу http://localhost:${PORT}`);
       console.log('Нажмите CTRL+C, чтобы остановить сервер');
       console.log('Доступные методы:');
-      console.log(`GET ${URI_PREFIX} - получить список городов, в query параметр search можно передать поисковый запрос`);
-      console.log(`POST ${URI_PREFIX} - создать город, в теле запроса нужно передать объект { cityName: string, backgound: object[], stretch: object[], bannerMain: object[], bannerMedium: object[], bannerSmall: object[] }`);
-      console.log(`\cities - массив объектов контактов вида { type: string, value: string }`);
-      console.log(`GET ${URI_PREFIX}/{id} - получить города по его ID`);
-      console.log(`PATCH ${URI_PREFIX}/{id} - изменить города с ID, в теле запроса нужно передать объект { name?: string, surname?: string, lastName?: string, contacts?: object[] }`);
-      console.log(`\cities - массив объектов контактов вида { type: string, value: string }`);
-      console.log(`DELETE ${URI_PREFIX}/{id} - удалить города по ID`);
+      console.log(`GET ${URI_PREFIX} - получить список мероприятия, в query параметр search можно передать поисковый запрос`);
+      console.log(`POST ${URI_PREFIX} - создать мероприятие, в теле запроса нужно передать объект { place: string, event: string, startedAt: string, endedAt: string, summ: string }`);
+      // console.log(`\events - массив объектов контактов вида { type: string, value: string }`);
+      console.log(`GET ${URI_PREFIX}/{id} - получить мероприятие по его ID`);
+      console.log(`PATCH ${URI_PREFIX}/{id} - изменить мероприятие с ID, в теле запроса нужно передать объект { place: string, event: string, startedAt: string, endedAt: string, summ: string }`);
+      // console.log(`\cities - массив объектов контактов вида { type: string, value: string }`);
+      console.log(`DELETE ${URI_PREFIX}/{id} - удалить мероприятие по ID`);
     }
   })
   // ...и вызываем запуск сервера на указанном порту

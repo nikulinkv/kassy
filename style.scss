@@ -7,6 +7,8 @@
 
 body {
     height: 100vh;
+    overflow: scroll;
+    padding: 0 10px;
 }
 
 body::-webkit-scrollbar {
@@ -37,6 +39,7 @@ body::-webkit-scrollbar {
         width: 100%;
         border-spacing: 5px;
         align-items: center;
+        overflow: scroll;
     }
 
     .section {
